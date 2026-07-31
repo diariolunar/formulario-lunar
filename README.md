@@ -69,7 +69,7 @@ As respostas ficam na coleção `submissions`. Cada documento possui `id`, `sub`
 
 ### Segurança
 
-`firestore.rules` permite que visitantes apenas criem documentos válidos. Leitura, listagem e exclusão exigem autenticação com o e-mail administrativo explicitamente autorizado; qualquer outra conta autenticada continua sem acesso. Atualização é bloqueada e o app não oferece cadastro.
+`firestore.rules` permite que visitantes apenas criem documentos válidos. Leitura, listagem e exclusão exigem autenticação com o UID administrativo explicitamente autorizado; qualquer outra conta autenticada continua sem acesso. O vínculo por UID permanece válido se o e-mail da conta mudar. Atualização é bloqueada e o app não oferece cadastro.
 
 ## Administração
 

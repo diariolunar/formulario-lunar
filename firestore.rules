@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     function isAdmin() {
       return request.auth != null
-        && request.auth.token.email == 'diariolunar47@gmail.com';
+        && request.auth.uid == 'BwfiE3tSy8eK88GXE2WcC0iCXTu2';
     }
     function validChapter(answer) {
       return answer.keys().hasOnly(['tem', 'quais'])
