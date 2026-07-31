@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() { return request.auth != null; }
+    function validChapter(answer) {
+      return answer.keys().hasOnly(['tem', 'quais'])
+        && answer.tem is bool
+        && answer.quais is string
+        && answer.quais.size() <= 300;
+    }
+    function validSubmission() {
+      return request.resource.data.keys().hasOnly([
+        'id','sub','nome','user','obra','link','prologoMaisDe1k',
+        'capitulosMaisDe41k','capitulosMenosDe500','gatilhoUsuario',
+        'gatilhoObra','createdAt'
+      ])
+      && request.resource.data.id == request.resource.id
+      && request.resource.data.sub in ['A1','A6','A7','A17']
+      && request.resource.data.nome is string && request.resource.data.nome.size() >= 2 && request.resource.data.nome.size() <= 120
+      && request.resource.data.user is string && request.resource.data.user.size() >= 2 && request.resource.data.user.size() <= 80
+      && request.resource.data.obra is string && request.resource.data.obra.size() >= 2 && request.resource.data.obra.size() <= 180
+      && request.resource.data.link is string && request.resource.data.link.size() >= 8 && request.resource.data.link.size() <= 2048
+      && request.resource.data.prologoMaisDe1k is bool
+      && validChapter(request.resource.data.capitulosMaisDe41k)
+      && validChapter(request.resource.data.capitulosMenosDe500)
+      && request.resource.data.gatilhoUsuario is string && request.resource.data.gatilhoUsuario.size() >= 1 && request.resource.data.gatilhoUsuario.size() <= 1000
+      && request.resource.data.gatilhoObra is string && request.resource.data.gatilhoObra.size() >= 1 && request.resource.data.gatilhoObra.size() <= 1000
+      && request.resource.data.createdAt == request.time;
+    }
+    match /submissions/{submissionId} {
+      allow create: if validSubmission();
+      allow read, delete: if isAdmin();
+      allow update: if false;
+    }
+  }
+}
