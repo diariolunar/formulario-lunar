@@ -12,6 +12,16 @@ const SUB_IDS:SubId[]=["A1","A6","A7","A17"];
 const emptyData=():Record<SubId,Submission[]>=>({A1:[],A6:[],A7:[],A17:[]});
 const dateOf=(r:Submission)=>r.createdAt?.toDate().toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})??"Sincronizando...";
 const chapters=(answer:Submission["capitulosMaisDe41k"])=>answer.tem?`Sim — ${answer.quais}`:"Não";
+async function copyText(text:string){
+  try { await navigator.clipboard.writeText(text); return; }
+  catch {
+    const area=document.createElement("textarea");
+    area.value=text; area.setAttribute("readonly",""); area.style.position="fixed"; area.style.opacity="0";
+    document.body.appendChild(area); area.select();
+    const copied=document.execCommand("copy"); area.remove();
+    if(!copied) throw new Error("clipboard unavailable");
+  }
+}
 
 export function AdminDashboard(){
   const [user,setUser]=useState<User|null>(null); const [checking,setChecking]=useState(true);
@@ -28,7 +38,7 @@ export function AdminDashboard(){
     })); setData(Object.fromEntries(entries) as Record<SubId,Submission[]>);
   }catch{setError("Não foi possível carregar as respostas. Tente novamente.");}finally{setLoading(false);}}
   useEffect(()=>{if(user) queueMicrotask(()=>void load());},[user]);
-  async function copy(record:Submission){try{await navigator.clipboard.writeText(formatWhatsApp(record));setCopied(true);setNotice("Texto copiado para a área de transferência.");}catch{setNotice("Não foi possível copiar. Autorize o acesso à área de transferência e tente novamente.");}}
+  async function copy(record:Submission){try{await copyText(formatWhatsApp(record));setCopied(true);setNotice("Texto copiado para a área de transferência.");}catch{setNotice("Não foi possível copiar. Autorize o acesso à área de transferência e tente novamente.");}}
   async function remove(){if(!deleting||deleteBusy)return;setDeleteBusy(true);setNotice("");try{await deleteDoc(doc(db,"submissions",deleting.id));setData(prev=>({...prev,[deleting.sub]:prev[deleting.sub].filter(r=>r.id!==deleting.id)}));if(selected?.id===deleting.id)setSelected(null);setDeleting(null);setNotice("Resposta excluída permanentemente.");}catch{setNotice("Falha ao excluir. O registro foi mantido; tente novamente.");}finally{setDeleteBusy(false);}}
   if(checking)return <main className="admin-page"><div className="loading">Verificando acesso...</div></main>;
   if(!user)return <Login/>;
