@@ -1,7 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isAdmin() { return request.auth != null; }
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'diariolunar47@gmail.com';
+    }
     function validChapter(answer) {
       return answer.keys().hasOnly(['tem', 'quais'])
         && answer.tem is bool
