@@ -2,6 +2,9 @@
 
 Aplicação web mobile-first para receber e administrar inscrições dos subs **A1 — Chama Eterna**, **A6 — Trono Profano**, **A7 — Margens de Mundos** e **A17 — Lâmina Sombria**. Cada sub tem uma rota e identidade visual próprias; não existe seletor público entre os formulários.
 
+- Produção: https://formulario-lunar.vercel.app
+- Repositório: https://github.com/diariolunar/formulario-lunar
+
 ## Tecnologias
 
 - Next.js 16, React 19 e TypeScript
