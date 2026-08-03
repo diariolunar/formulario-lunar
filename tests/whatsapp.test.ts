@@ -173,4 +173,19 @@ describe("formatadores de WhatsApp",()=>{
     const record={...base,sub} as Submission;
     expect(format(record)).toBe(expected[sub]);
   });
+
+  it.each([
+    ["A1",formatWhatsAppA1],["A6",formatWhatsAppA6],["A7",formatWhatsAppA7],["A17",formatWhatsAppA17],
+  ] as const)("preserva respostas textuais dos capítulos no template %s",(sub,format)=>{
+    const record={
+      ...base,
+      sub,
+      capitulosMaisDe41k:{tem:true,quais:"Capítulos 3 e 7, além do especial"},
+      capitulosMenosDe500:{tem:true,quais:"Prólogo bônus e capítulo 2"},
+    } as Submission;
+    const textoEsperado=expected[sub]
+      .replace("3, 7","Capítulos 3 e 7, além do especial")
+      .replace("\n2\n","\nPrólogo bônus e capítulo 2\n");
+    expect(format(record)).toBe(textoEsperado);
+  });
 });

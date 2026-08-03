@@ -30,10 +30,6 @@ export function LunarForm({ sub }:{sub:SubId}) {
     if (prologo===null || mais===null || menos===null) { setFeedback({type:"error",text:"Responda às perguntas de Sim ou Não."}); return; }
     const maisQuais=clean(String(data.get("maisQuais")??""));
     const menosQuais=clean(String(data.get("menosQuais")??""));
-    const chapterPattern=/^[0-9]+(?:[ ,]+[0-9]+)*$/;
-    if ((mais && !chapterPattern.test(maisQuais)) || (menos && !chapterPattern.test(menosQuais))) {
-      setFeedback({type:"error",text:"Nos capítulos, informe apenas números separados por vírgula."}); return;
-    }
     setSending(true); setFeedback(null);
     try {
       const ref=doc(db,"submissions",crypto.randomUUID());
@@ -62,9 +58,9 @@ export function LunarForm({ sub }:{sub:SubId}) {
     <div className="section-label">Detalhes da história</div>
     <YesNo name="prologo" legend="Seu Prólogo tem +1k palavras?" value={prologo} onChange={setPrologo} />
     <YesNo name="mais" legend="Algum capítulo tem +4,1k palavras?" value={mais} onChange={setMais} />
-    {mais && <div className="field conditional"><label htmlFor="maisQuais">Quais? (Apenas números)</label><input id="maisQuais" name="maisQuais" required inputMode="numeric" placeholder="Ex.: 3, 7" aria-describedby="mais-hint" /><span id="mais-hint" className="hint">Separe os números por vírgula.</span></div>}
+    {mais && <div className="field conditional"><label htmlFor="maisQuais">Quais?</label><input id="maisQuais" name="maisQuais" required maxLength={300} placeholder="Ex.: 3, 7 ou capítulo especial" aria-describedby="mais-hint" /><span id="mais-hint" className="hint">Você pode informar números, nomes ou observações sobre os capítulos.</span></div>}
     <YesNo name="menos" legend="Algum capítulo tem 500 palavras ou menos?" value={menos} onChange={setMenos} />
-    {menos && <div className="field conditional"><label htmlFor="menosQuais">Quais? (Apenas números)</label><input id="menosQuais" name="menosQuais" required inputMode="numeric" placeholder="Ex.: 2, 9" aria-describedby="menos-hint" /><span id="menos-hint" className="hint">Separe os números por vírgula.</span></div>}
+    {menos && <div className="field conditional"><label htmlFor="menosQuais">Quais?</label><input id="menosQuais" name="menosQuais" required maxLength={300} placeholder="Ex.: 2, 9 ou capítulo bônus" aria-describedby="menos-hint" /><span id="menos-hint" className="hint">Você pode informar números, nomes ou observações sobre os capítulos.</span></div>}
     <div className="field"><label htmlFor="gatilhoUsuario">Você tem algum gatilho?</label><textarea id="gatilhoUsuario" name="gatilhoUsuario" required maxLength={1000} placeholder="Informe seus gatilhos ou escreva “Não”." /></div>
     <div className="field"><label htmlFor="gatilhoObra">Sua obra tem algum gatilho?</label><textarea id="gatilhoObra" name="gatilhoObra" required maxLength={1000} placeholder="Informe os gatilhos da obra ou escreva “Não”." /></div>
     <button className="submit" type="submit" disabled={sending}>{sending?"Enviando...":"Enviar resposta"}</button>
